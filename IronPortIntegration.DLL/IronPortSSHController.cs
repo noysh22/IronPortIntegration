@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Configuration;
 using Renci.SshNet;
 
 using IronPortIntegration.Exceptions;
@@ -13,8 +14,9 @@ namespace IronPortIntegration
     public class IronPortSSHController
     {
         // ===================== Constants ========================
-        private const string IronPortDefaultHost = "CHANGEHOST";
-        private const string IronPortDefaultUserName = "CAHNGEUSER";
+        private static string IronPortDefaultHost = ConfigurationManager.AppSettings["DefaultHost"];
+        private static string IronPortDefaultUserName = ConfigurationManager.AppSettings["DefaultUserName"];
+        private static string IronPortDefaultPass = ConfigurationManager.AppSettings["CurrentPass"];
 
         // ==================== Public members ====================
         public string Host { get; private set; }
@@ -26,13 +28,13 @@ namespace IronPortIntegration
         private IronPortSSHClient _sshClient;
 
         public IronPortSSHController(
-            string pass,
-            string username = IronPortDefaultUserName,
-            string host = IronPortDefaultHost)
+            string host = null,
+            string username = null,
+            string pass = null)
         {
-            Host = host;
-            UserName = username;
-            Key = pass;
+            Host = null != host ? host : IronPortDefaultHost;
+            UserName = null != username ? username : IronPortDefaultUserName;
+            Key = null != pass ? pass : IronPortDefaultPass;
             _connectionInfo = new PasswordConnectionInfo(Host, UserName, Key);
             _sshClient = new IronPortSSHClient(_connectionInfo);
         }

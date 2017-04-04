@@ -13,7 +13,7 @@ namespace IronPortIntegration.Exe
     {
         static void Main(string[] args)
         {
-            var controller = new IronPortSSHController("CHANGEPASS");
+            var controller = new IronPortSSHController();
 
             try
             {
