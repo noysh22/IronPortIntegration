@@ -73,5 +73,40 @@ namespace IronPortIntegration
 
             return null;
         }
+
+        public string AddSenderToBlacklist(string sender)
+        {
+            try
+            {
+                _sshClient.Connect();
+                Debug.WriteLine("SSH client connected to {0} using username {1}", Host, UserName);
+                return _sshClient.AddSenderToBlacklist(sender);
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                Debug.WriteLine("Failed Connecting to IronPort via ssh - {0}", ex.Message);
+                throw new IronPortSshConnentionException("Failed Connecting to IronPort via ssh", ex);
+            }
+            catch (IronPortNotConnectedException)
+            {
+                Debug.WriteLine("SSH client it not connected");
+                throw;
+            }
+            catch (IronPortSshCommandException ex)
+            {
+                Debug.WriteLine("Failed getting iron-port version with status: {0} ({1})", ex.ExitStatus, ex.Message);
+            }
+            catch (IronPortException ex)
+            {
+                Debug.WriteLine("General Error - {0}", ex.Message);
+                throw;
+            }
+            finally
+            {
+                _sshClient.Disconnect();
+            }
+
+            return null;
+        }
     }
 }

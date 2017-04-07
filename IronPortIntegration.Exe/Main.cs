@@ -17,12 +17,14 @@ namespace IronPortIntegration.Exe
 
             try
             {
-                var versionOutput = controller.GetIronPortVersion();
+                //var versionOutput = controller.GetIronPortVersion();
 
-                if (null == versionOutput)
-                    Console.WriteLine("Failed getting version, look at output window");
+                var addSenderOutput = controller.AddSenderToBlacklist("test3.com");
+
+                if (null == addSenderOutput)
+                    Console.WriteLine("Failed adding sender to blacklist, look at output window");
                 else
-                    Console.WriteLine(versionOutput);
+                    Console.WriteLine(addSenderOutput);
             }
             catch (IronPortException ex)
             {

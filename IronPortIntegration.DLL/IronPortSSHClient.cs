@@ -26,5 +26,14 @@ namespace IronPortIntegration
             var getVersion = new IronPortGetVersionCommand();
             return getVersion.Execute(this);
         }
+
+        public string AddSenderToBlacklist(string sender)
+        {
+            if (!IsConnected)
+                throw new IronPortNotConnectedException();
+
+            var addToBlacklist = new IronPortSSHAddSenderToBlacklist(sender);
+            return addToBlacklist.ExecuteAndCommit(this);
+        }
     }
 }
