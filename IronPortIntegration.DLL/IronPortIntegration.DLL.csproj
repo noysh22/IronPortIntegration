@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IronPortShell.cs" />
     <Compile Include="IronPortSSHClient.cs" />
     <Compile Include="SshCommands\IronPortGetVersionCommand.cs" />
     <Compile Include="Common\IronPortIntegrationExceptions.cs" />
