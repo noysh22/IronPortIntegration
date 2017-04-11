@@ -11,7 +11,7 @@ using IronPortIntegration.Exceptions;
 
 namespace IronPortIntegration
 {
-    abstract class IronPortSSHCommitCommand : IronPortSSHCommand
+    public abstract class IronPortSSHCommitCommand : IronPortSSHCommand
     {
         private string CommitCommandText;
         protected string CommitMessage;

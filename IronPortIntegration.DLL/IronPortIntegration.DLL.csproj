@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\GrepLogEntry.cs" />
     <Compile Include="IronPortShell.cs" />
     <Compile Include="IronPortSSHClient.cs" />
     <Compile Include="SshCommands\IronPortGetVersionCommand.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="IronPortSSHController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SshCommands\IronPortSSHCommitCommand.cs" />
+    <Compile Include="SshCommands\IronPortSSHGrepCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

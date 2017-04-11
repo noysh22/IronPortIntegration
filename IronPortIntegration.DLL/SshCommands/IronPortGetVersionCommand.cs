@@ -10,7 +10,7 @@ using IronPortIntegration.Exceptions;
 
 namespace IronPortIntegration
 {
-    class IronPortGetVersionCommand : IronPortSSHCommand
+    public class IronPortGetVersionCommand : IronPortSSHCommand
     {
         public IronPortGetVersionCommand()
         {

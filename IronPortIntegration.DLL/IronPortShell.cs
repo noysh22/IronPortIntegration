@@ -11,9 +11,8 @@ using Renci.SshNet.Common;
 
 namespace IronPortIntegration
 {
-    class IronPortShell : SshClient
+    public class IronPortShell : SshClient
     {
-        private static TimeSpan DefaultCommandTimeout;
 
         private const string DEFAULT_SHELL = "ironportshell";
         private const uint COLUMNS = 80;
@@ -25,14 +24,10 @@ namespace IronPortIntegration
         private const string SHELL_READY_INDICATOR = "relay.dworld.co.uk>";
         private const string UNIX_LINEBREAK = "\n";
 
+        public TimeSpan CommandTimeout { get; private set; }
         private ShellStream _shell;
         private object _syncObj;
         private bool _isShellReady;
-
-        static IronPortShell()
-        {
-            DefaultCommandTimeout = new TimeSpan(0, 1, 0); // Timeout is 1 minute
-        }
 
         public IronPortShell(string host, string username, string pass)
             : base(host, username, pass)
@@ -40,6 +35,7 @@ namespace IronPortIntegration
             ErrorOccurred += IronPortShell_ErrorOccurred;
             _syncObj = new object();
             _isShellReady = false;
+            CommandTimeout = new TimeSpan(0, 1, 0); // Timeout is 1 minute
         }
 
         public IronPortShell(ConnectionInfo conn)
@@ -48,6 +44,7 @@ namespace IronPortIntegration
             ErrorOccurred += IronPortShell_ErrorOccurred;
             _syncObj = new object();
             _isShellReady = false;
+            CommandTimeout = new TimeSpan(0, 1, 0); // Timeout is 1 minute
         }
 
         public void StartShell(string terminalName = DEFAULT_SHELL, uint columns = COLUMNS, uint rows = ROWS, uint width = WIDTH, uint height = HEIGHT, int bufferSize = BUFFER_SIZE)
@@ -56,7 +53,7 @@ namespace IronPortIntegration
             _shell = CreateShellStream(terminalName, columns, rows, width, height, bufferSize);
 
             // Wait for the shell to be ready by waiting for the console indicator to appear on the stream
-            var result = _shell.Expect(SHELL_READY_INDICATOR, DefaultCommandTimeout);
+            var result = _shell.Expect(SHELL_READY_INDICATOR, CommandTimeout);
             _isShellReady = true;
         }
 
@@ -69,7 +66,7 @@ namespace IronPortIntegration
             {
                 _shell.Write(commandText + UNIX_LINEBREAK);
 
-                var result = _shell.Expect(SHELL_READY_INDICATOR, DefaultCommandTimeout);
+                var result = _shell.Expect(SHELL_READY_INDICATOR, CommandTimeout);
 
                 Console.WriteLine(result);
 

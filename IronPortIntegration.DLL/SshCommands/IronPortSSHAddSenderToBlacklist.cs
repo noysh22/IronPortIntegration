@@ -11,7 +11,7 @@ using IronPortIntegration.Exceptions;
 
 namespace IronPortIntegration
 {
-    class IronPortSSHAddSenderToBlacklist : IronPortSSHCommitCommand
+    public class IronPortSSHAddSenderToBlacklist : IronPortSSHCommitCommand
     {
         private static string LISTENER = "IncomingMail";
         private static string SENDERGROUP = "BLACKLIST";
