@@ -17,7 +17,7 @@ namespace IronPortIntegration
             CommandText = _supportedCommands[IronPortSupportedCommand.GetVersion];
         }
 
-        public override string Execute(SshClient sshClient)
+        public override string Execute(IronPortShell sshClient)
         {
             using (var sshCommand = sshClient.CreateCommand(CommandText))
             {
@@ -34,7 +34,7 @@ namespace IronPortIntegration
             }
         }
 
-        public override Task<string> ExecuteAsync(SshClient sshClient)
+        public override Task<string> ExecuteAsync(IronPortShell sshClient)
         {
             throw new NotImplementedException();
         }

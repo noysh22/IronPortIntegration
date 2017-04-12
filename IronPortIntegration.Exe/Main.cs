@@ -13,13 +13,13 @@ namespace IronPortIntegration.Exe
     {
         static void Main(string[] args)
         {
-            var controller = new IronPortSSHController();
+            var controller = new IronPortController();
 
             try
             {
                 //var versionOutput = controller.GetIronPortVersion();
 
-                var addSenderOutput = controller.AddSenderToBlacklist("test3.com");
+                var addSenderOutput = controller.AddSenderToBlacklist("test5.com");
 
                 if (null == addSenderOutput)
                     Console.WriteLine("Failed adding sender to blacklist, look at output window");

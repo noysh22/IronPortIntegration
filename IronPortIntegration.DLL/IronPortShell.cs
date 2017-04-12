@@ -9,6 +9,8 @@ using System.Diagnostics;
 using Renci.SshNet;
 using Renci.SshNet.Common;
 
+using IronPortIntegration.Exceptions;
+
 namespace IronPortIntegration
 {
     public class IronPortShell : SshClient
@@ -49,7 +51,9 @@ namespace IronPortIntegration
 
         public void StartShell(string terminalName = DEFAULT_SHELL, uint columns = COLUMNS, uint rows = ROWS, uint width = WIDTH, uint height = HEIGHT, int bufferSize = BUFFER_SIZE)
         {
-            Connect();
+            if(!IsConnected)
+                Connect();
+
             _shell = CreateShellStream(terminalName, columns, rows, width, height, bufferSize);
 
             // Wait for the shell to be ready by waiting for the console indicator to appear on the stream
@@ -57,7 +61,7 @@ namespace IronPortIntegration
             _isShellReady = true;
         }
 
-        public string RunShellCommand(string commandText, string resultFormat = null)
+        public string RunShellCommand(string commandText)
         {
             if (!_isShellReady)
                 return null;
@@ -74,9 +78,44 @@ namespace IronPortIntegration
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public string GetIronPortVersion()
+        {
+            if (!IsConnected)
+                throw new IronPortNotConnectedException();
+
+            var getVersion = new IronPortGetVersionCommand();
+            return getVersion.Execute(this);
+        }
+
+        public string AddSenderToBlacklist(string sender)
+        {
+            if (!IsConnected)
+                throw new IronPortNotConnectedException();
+
+            var addToBlacklist = new IronPortSSHAddSenderToBlacklist(sender);
+
+            StartShell();
+            var result = addToBlacklist.ExecuteAndCommit(this);
+            CloseShell();
+
+            return result;
+        }
+
+        public void CloseShell()
         {
             _shell.Close();
+            _isShellReady = false;
+            
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (null != _shell)
+            {
+                CloseShell();
+                _shell.Dispose();
+            }
+            
             Disconnect();
             base.Dispose(disposing);
         }

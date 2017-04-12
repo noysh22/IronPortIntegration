@@ -32,8 +32,8 @@ namespace IronPortIntegration
             { IronPortSupportedCommand.GrepLogFile, "grep \"{0}\" {1}" }
         };
 
-        public abstract string Execute(SshClient sshClient);
+        public abstract string Execute(IronPortShell sshClient);
 
-        public abstract Task<string> ExecuteAsync(SshClient sshClient);
+        public abstract Task<string> ExecuteAsync(IronPortShell sshClient);
     }
 }
