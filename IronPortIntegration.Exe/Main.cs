@@ -17,18 +17,28 @@ namespace IronPortIntegration.Exe
 
             try
             {
-                //var versionOutput = controller.GetIronPortVersion();
+                //var addSenderOutput = controller.AddSenderToBlacklist("test5.com");
 
-                var addSenderOutput = controller.AddSenderToBlacklist("test5.com");
+                //if (null == addSenderOutput)
+                //    Console.WriteLine("Failed adding sender to blacklist, look at output window");
+                //else
+                //    Console.WriteLine(addSenderOutput);
 
-                if (null == addSenderOutput)
-                    Console.WriteLine("Failed adding sender to blacklist, look at output window");
-                else
-                    Console.WriteLine(addSenderOutput);
+                var recipients = controller.GetAllRecipientsBySubject("Test");
+
+                foreach (var recipient in recipients)
+                {
+                    Console.WriteLine(recipient);
+                }
             }
             catch (IronPortException ex)
             {
                 Console.WriteLine("Failed with: {0}", ex.Message + 
+                    Environment.NewLine + ex.InnerException.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with: {0}", ex.Message +
                     Environment.NewLine + ex.InnerException.Message);
             }
 

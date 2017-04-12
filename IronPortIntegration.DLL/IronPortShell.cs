@@ -92,7 +92,7 @@ namespace IronPortIntegration
             if (!IsConnected)
                 throw new IronPortNotConnectedException();
 
-            var addToBlacklist = new IronPortSSHAddSenderToBlacklist(sender);
+            var addToBlacklist = new IronPortAddSenderToBlacklistCommand(sender);
 
             StartShell();
             var result = addToBlacklist.ExecuteAndCommit(this);
