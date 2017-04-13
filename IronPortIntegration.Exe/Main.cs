@@ -24,11 +24,19 @@ namespace IronPortIntegration.Exe
                 //else
                 //    Console.WriteLine(addSenderOutput);
 
-                var recipients = controller.GetAllRecipientsBySubject("Test");
+                var recipients = controller.GetAllRecipientsBySubject("This is a test subject");
+                //var recipients = controller.GetAllRecipientsBySender("noy.sh22@gmail.com");
 
-                foreach (var recipient in recipients)
+                if (null == recipients)
                 {
-                    Console.WriteLine(recipient);
+                    Console.WriteLine("Nothing found");
+                }
+                else
+                {
+                    foreach (var recipient in recipients)
+                    {
+                        Console.WriteLine(recipient);
+                    }
                 }
             }
             catch (IronPortException ex)

@@ -30,20 +30,6 @@ namespace IronPortIntegration
             var formattedCommand = string.Format(CommandText, LISTENER, SENDERGROUP, HostList);
 
             return sshClient.RunShellCommand(formattedCommand);
-
-            //using (var sshCommand = sshClient.CreateCommand(formattedCommand))
-            //{
-            //    Debug.WriteLine(string.Format("Executing command {0}...", formattedCommand));
-            //    var result = sshCommand.Execute();
-            //    Debug.WriteLine(string.Format("Command {0} done", formattedCommand));
-
-            //    if (0 != sshCommand.ExitStatus)
-            //    {
-            //        throw new IronPortSshCommandException(sshCommand.ExitStatus, sshCommand.Error);
-            //    }
-
-            //    return result;
-            //}
         }
 
         public override Task<string> ExecuteAsync(IronPortShell sshClient)

@@ -117,5 +117,11 @@ namespace IronPortIntegration
             _sshClient.Connect();
             return _queryResolver.GetAllRecipientsOfSubject(mailSubject);
         }
+
+        public List<string> GetAllRecipientsBySender(string senderMail)
+        {
+            _sshClient.Connect();
+            return _queryResolver.GetAllRecipientsBySender(senderMail);
+        }
     }
 }

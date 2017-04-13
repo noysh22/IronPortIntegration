@@ -17,6 +17,19 @@ namespace IronPortIntegration
         public IronPortGrepMailLogCommand(string query)
         {
             CommandText = string.Format(_supportedCommands[IronPortSupportedCommand.GrepLogFile], query, MailLogFolder);
+            CommandResult = null;
+        }
+
+        public override bool Succeeded
+        {
+            get
+            {
+                const string failedGrepResultIndicator = "No results were found. Use another regular expression(s) to search.";
+                if (null == CommandResult)
+                    return false;
+
+                return !CommandResult.Contains(failedGrepResultIndicator);
+            }
         }
 
         public override string Execute(IronPortShell sshClient)
@@ -31,6 +44,9 @@ namespace IronPortIntegration
                 {
                     throw new IronPortSshCommandException(sshCommand.ExitStatus, sshCommand.Error);
                 }
+
+                // Save the command result
+                CommandResult = result;
 
                 return result;
             }

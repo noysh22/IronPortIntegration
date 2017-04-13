@@ -21,6 +21,7 @@ namespace IronPortIntegration
         public IronPortCommitCommand()
         {
             CommitCommandText = _supportedCommands[IronPortSupportedCommand.Commit];
+            CommandResult = null;
         }
 
         private void Commit(IronPortShell sshClient)
@@ -28,18 +29,6 @@ namespace IronPortIntegration
             var commitCmd = string.Format(CommitCommandFormat, CommitCommandText, CommitMessage);
 
             sshClient.RunShellCommand(commitCmd);
-
-            //using (var sshCommand = sshClient.CreateCommand(commitCmd))
-            //{
-            //    Debug.WriteLine(string.Format("Executing command {0}...", commitCmd));
-            //    var result = sshCommand.Execute();
-            //    Debug.WriteLine(string.Format("Command {0} done", commitCmd));
-
-            //    if (0 != sshCommand.ExitStatus)
-            //    {
-            //        throw new IronPortSshCommandException(sshCommand.ExitStatus, sshCommand.Error);
-            //    }
-            //}
         }
 
         public string ExecuteAndCommit(IronPortShell sshClient)
@@ -48,6 +37,8 @@ namespace IronPortIntegration
 
             if (null != result)
                 Commit(sshClient);
+
+            CommandResult = result;
 
             return result;
         }

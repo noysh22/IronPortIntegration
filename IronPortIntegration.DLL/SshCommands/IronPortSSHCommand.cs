@@ -22,6 +22,8 @@ namespace IronPortIntegration
     public abstract class IronPortSSHCommand
     {
         public string CommandText { get; protected set; }
+        public string CommandResult { get; protected set; }
+        public virtual bool Succeeded { get { return true; } }
 
         // Dict containing format strings / literal strings of cli commands for iron port
         protected Dictionary<IronPortSupportedCommand, string> _supportedCommands = new Dictionary<IronPortSupportedCommand, string>
@@ -33,7 +35,6 @@ namespace IronPortIntegration
         };
 
         public abstract string Execute(IronPortShell sshClient);
-
         public abstract Task<string> ExecuteAsync(IronPortShell sshClient);
     }
 }

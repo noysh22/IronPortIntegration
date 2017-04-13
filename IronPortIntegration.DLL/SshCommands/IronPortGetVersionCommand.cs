@@ -30,6 +30,8 @@ namespace IronPortIntegration
                     throw new IronPortSshCommandException(sshCommand.ExitStatus, sshCommand.Error);
                 }
 
+                CommandResult = result;
+
                 return result;
             }
         }

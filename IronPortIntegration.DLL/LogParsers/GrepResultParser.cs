@@ -103,6 +103,13 @@ namespace IronPortIntegration
             return int.Parse(midStr.Split(' ').Last());
         }
 
+        public bool IsAbortedConversation(string smtpConversation, int MID)
+        {
+            const string abortedMessageIndicatodFormat = @"(Message\sfinished\sMID\s{0}\saborted)$";
+            var match = Regex.Match(smtpConversation, string.Format(abortedMessageIndicatodFormat, MID));
+            return match.Success;
+        }
+
         public List<string> GetRecipientsFromSmtpConversation(string rawData)
         {
             const string toRegexExpression = @"(To:)\s(<[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}>)";
