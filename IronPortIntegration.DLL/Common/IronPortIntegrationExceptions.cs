@@ -31,4 +31,11 @@ namespace IronPortIntegration.Exceptions
         public IronPortSshConnentionException(string message, Exception innerEx) : 
             base(message, innerEx) { }
     }
+
+    public class IronPortParsingException : IronPortException
+    {
+        public IronPortParsingException(string message) :
+            base(message)
+        { }
+    }
 }

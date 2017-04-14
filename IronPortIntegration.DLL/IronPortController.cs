@@ -11,7 +11,7 @@ using IronPortIntegration.Exceptions;
 
 namespace IronPortIntegration
 {
-    public class IronPortController
+    public class IronPortController : IDisposable
     {
         // ===================== Constants ========================
         private static string IronPortDefaultHost = ConfigurationManager.AppSettings["DefaultHost"];
@@ -42,12 +42,20 @@ namespace IronPortIntegration
             _queryResolver = new IronPortQueryResolver(_sshClient);
         }
 
+        private void EnsureConnection()
+        {
+            if (!_sshClient.IsConnected)
+            {
+                _sshClient.Connect();
+                Debug.WriteLine("SSH client connected to {0} using username {1}", Host, UserName);
+            }
+        }
+
         public string GetIronPortVersion()
         {
             try
             {
-                _sshClient.Connect();
-                Debug.WriteLine("SSH client connected to {0} using username {1}", Host, UserName);
+                EnsureConnection();   
                 return _sshClient.GetIronPortVersion();
             }
             catch(System.Net.Sockets.SocketException ex)
@@ -81,7 +89,7 @@ namespace IronPortIntegration
         {
             try
             {
-                _sshClient.Connect();
+                EnsureConnection();
                 Debug.WriteLine("SSH client connected to {0} using username {1}", Host, UserName);
                 return _sshClient.AddSenderToBlacklist(sender);
             }
@@ -112,16 +120,31 @@ namespace IronPortIntegration
             return null;
         }
 
+        /// <summary>
+        /// Get all the recipients which recieved a given mail subject
+        /// </summary>
+        /// <param name="mailSubject">The mail subject to query</param>
+        /// <returns>List of all recipients found</returns>
         public List<string> GetAllRecipientsBySubject(string mailSubject)
         {
-            _sshClient.Connect();
+            EnsureConnection();
             return _queryResolver.GetAllRecipientsOfSubject(mailSubject);
         }
 
+        /// <summary>
+        /// Get all the recipients which recieved mails from a given sender
+        /// </summary>
+        /// <param name="senderMail">The sender address to query</param>
+        /// <returns>List of all recipients found</returns>
         public List<string> GetAllRecipientsBySender(string senderMail)
         {
-            _sshClient.Connect();
+            EnsureConnection();
             return _queryResolver.GetAllRecipientsBySender(senderMail);
+        }
+
+        public void Dispose()
+        {
+            _sshClient.Dispose();
         }
     }
 }

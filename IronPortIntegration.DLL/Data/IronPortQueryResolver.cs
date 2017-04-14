@@ -27,10 +27,33 @@ namespace IronPortIntegration
 
         private string GetSmtpConversationByMID(int MID)
         {
-            const string messageDetailsQueryFormat = "MID {0}";
+            const string messageDetailsQueryFormat = "\"MID {0}\"";
 
             var grepCommand = new IronPortGrepMailLogCommand(string.Format(messageDetailsQueryFormat, MID));
             return grepCommand.Execute(_sshClient);
+        }
+
+        /// <summary>
+        /// Build an extended Grep query to get all the relevant SMTP conversation from
+        /// IronPort according to their MID
+        /// </summary>
+        /// <param name="entries">All log entries relevant for the grep query</param>
+        /// <returns>All the rows return from the grep query</returns>
+        private List<string> GetSmtpConversationsForEntries(List<GrepLogEntry> entries)
+        {
+            const string extendedMIDQueryFormat = "-e \"MID {0}\" ";
+
+            // Build the query
+            var extendedQueryString = new StringBuilder();
+            foreach(var entry in entries)
+            {
+                extendedQueryString.AppendFormat(extendedMIDQueryFormat, entry.MID);
+            }
+
+            var extendedGrepCommand = new IronPortGrepMailLogCommand(extendedQueryString.ToString());
+            var resultRows = extendedGrepCommand.Execute(_sshClient);
+
+            return resultRows.Split(IronPortCommon.UnixLineBreak).ToList();
         }
 
         /// <summary>
@@ -41,7 +64,7 @@ namespace IronPortIntegration
         /// TODO: Same effeciancy problem as written below, need to be improved 
         public List<string> GetAllRecipientsOfSubject(string mailSubject)
         {
-            const string subjectQueryFormat = "Subject '{0}'";
+            const string subjectQueryFormat = "\"Subject '{0}'\"";
 
             var recipients = new List<string>();
 
@@ -60,11 +83,19 @@ namespace IronPortIntegration
             // Parse all the rows from the grep result to log entries in order to get their message ID
             List<GrepLogEntry> logEntries = _parser.ParseRows(resultRows);
 
-            // Get all the recipients from each smtp conversation with a given mid
-            foreach(var entry in logEntries)
+            // Query for all the smtp conversations related to the given log entries list in one grep query
+            var smtpConversationsRows = GetSmtpConversationsForEntries(logEntries);
+
+            // Divide the result rows to conversation by their MID
+            var smtpConversationByMID = _parser.ExtractSMTPConversations(smtpConversationsRows, logEntries);
+
+            // Extract all the recipients from the conversations
+            foreach (var conversation in smtpConversationByMID)
             {
-                var resultString = GetSmtpConversationByMID(entry.MID);
-                recipients = recipients.Union(_parser.GetRecipientsFromSmtpConversation(resultString)).ToList();
+                if (!_parser.IsAbortedConversation(conversation.SmtpConversationStr, conversation.MID))
+                {
+                    recipients = recipients.Union(_parser.GetRecipientsFromSmtpConversation(conversation.SmtpConversationStr)).ToList();
+                }
             }
 
             return recipients;
@@ -79,7 +110,7 @@ namespace IronPortIntegration
         /// TODO: the SMTP conversation in 1 query and then filter the conversations
         public List<string> GetAllRecipientsBySender(string senderMail)
         {
-            const string senderQeuryFormat = "From: <{0}>";
+            const string senderQeuryFormat = "\"From: <{0}>\"";
 
             // TODO: Maybe validate if the parameter is valid email using regex?
             if (string.IsNullOrEmpty(senderMail))
@@ -103,12 +134,18 @@ namespace IronPortIntegration
             // Parse all the rows from the grep result to log entries in order to get their message ID
             List<GrepLogEntry> logEntries = _parser.ParseRows(resultRows);
 
-            foreach (var entry in logEntries)
+            // Query for all the smtp conversations related to the given log entries list in one grep query
+            var smtpConversationsRows = GetSmtpConversationsForEntries(logEntries);
+
+            // Divide the result rows to conversation by their MID
+            var smtpConversationByMID = _parser.ExtractSMTPConversations(smtpConversationsRows, logEntries);
+
+            // Extract all the recipients from the smtp conversations
+            foreach (var conversation in smtpConversationByMID)
             {
-                var stmpConversation = GetSmtpConversationByMID(entry.MID);
-                if(!_parser.IsAbortedConversation(stmpConversation, entry.MID))
+                if (!_parser.IsAbortedConversation(conversation.SmtpConversationStr, conversation.MID))
                 {
-                    recipients = recipients.Union(_parser.GetRecipientsFromSmtpConversation(stmpConversation)).ToList();
+                    recipients = recipients.Union(_parser.GetRecipientsFromSmtpConversation(conversation.SmtpConversationStr)).ToList();
                 }
             }
 

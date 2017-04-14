@@ -49,6 +49,7 @@
     <Compile Include="Common\IronPortCommon.cs" />
     <Compile Include="Data\GrepLogEntry.cs" />
     <Compile Include="Data\IronPortQueryResolver.cs" />
+    <Compile Include="Data\SmtpConversation.cs" />
     <Compile Include="IronPortShell.cs" />
     <Compile Include="LogParsers\GrepResultParser.cs" />
     <Compile Include="SshCommands\IronPortGetVersionCommand.cs" />

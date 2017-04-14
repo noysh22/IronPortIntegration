@@ -31,7 +31,7 @@ namespace IronPortIntegration
             { IronPortSupportedCommand.GetVersion, "version" },
             { IronPortSupportedCommand.Commit, "commit \"{0}\" Y" },
             { IronPortSupportedCommand.AddSenderToBlackList, "listenerconfig edit \"{0}\" hostaccess edit sendergroup {1} new {2}" },
-            { IronPortSupportedCommand.GrepLogFile, "grep \"{0}\" {1}" }
+            { IronPortSupportedCommand.GrepLogFile, "grep {0} {1}" }
         };
 
         public abstract string Execute(IronPortShell sshClient);
