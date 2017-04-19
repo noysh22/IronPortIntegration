@@ -23,7 +23,14 @@ namespace Siemplify.Integrations.IronPort
         private const uint HEIGHT = 600;
         private const int BUFFER_SIZE = 4 * 1024;
 
-        private const string SHELL_READY_INDICATOR = "relay.dworld.co.uk>";
+        public static readonly string SHELL_READY_INDICATOR = "relay.dworld.co.uk>";
+
+        private static readonly Tuple<string, string> ReplacableShellString = 
+            new Tuple<string, string>("\r\r\n", string.Empty);
+
+        private static readonly Tuple<string, string> ReplacableBreakLine =
+            new Tuple<string, string>("\r\n\r\n", "\n");
+
         private const string UNIX_LINEBREAK = "\n";
 
         public TimeSpan CommandTimeout { get; private set; }
@@ -72,7 +79,14 @@ namespace Siemplify.Integrations.IronPort
 
                 var result = _shell.Expect(SHELL_READY_INDICATOR, CommandTimeout);
 
-                Console.WriteLine(result);
+                // Replace the string \r\r\n which returns from the shell with empty string
+                result = result.Replace(ReplacableShellString.Item1, ReplacableShellString.Item2);
+                // Replace the breakline which returns from the shell with single \n
+                result = result.Replace(ReplacableBreakLine.Item1, ReplacableBreakLine.Item2);
+
+                Debug.WriteLine(string.Format("Shell command {0} returned with {1}",
+                    commandText,
+                    result));
 
                 return result;
             }
@@ -87,7 +101,7 @@ namespace Siemplify.Integrations.IronPort
             return getVersion.Execute(this);
         }
 
-        public string AddSenderToBlacklist(string sender)
+        public bool AddSenderToBlacklist(string sender)
         {
             if (!IsConnected)
                 throw new IronPortNotConnectedException();
@@ -98,7 +112,15 @@ namespace Siemplify.Integrations.IronPort
             var result = addToBlacklist.ExecuteAndCommit(this);
             CloseShell();
 
-            return result;
+            var isSucceeded = addToBlacklist.IsSucceeded();
+
+            if (!isSucceeded)
+            {
+                Debug.WriteLine(string.Format("Failed adding {0} to blacklist, command result is: {1}",
+                    sender, result));
+            }
+
+            return isSucceeded;
         }
 
         public void CloseShell()

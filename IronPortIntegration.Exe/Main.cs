@@ -18,12 +18,12 @@ namespace Siemplify.Integrations.IronPort.Exe
             {
                 try
                 {
-                    //var addSenderOutput = controller.AddSenderToBlacklist("test5.com");
+                    //var addSenderOutput = controller.AddSenderToBlacklist("test7.com");
 
-                    //if (null == addSenderOutput)
+                    //if (!addSenderOutput)
                     //    Console.WriteLine("Failed adding sender to blacklist, look at output window");
                     //else
-                    //    Console.WriteLine(addSenderOutput);
+                    //    Console.WriteLine("Great Success");
 
                     var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                     var recipients1 = controller.GetAllRecipientsBySubject("This is a test subject");

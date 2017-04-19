@@ -7,40 +7,31 @@ using System.Diagnostics;
 
 using Renci.SshNet;
 
-using Siemplify.Integrations.IronPort.Exceptions;
+using Siemplify.Integrations.IronPort.Common;
 
 namespace Siemplify.Integrations.IronPort
 {
     public abstract class IronPortCommitCommand : IronPortSSHCommand
     {
-        private string CommitCommandText;
+        protected string CommitCommandText;
         protected string CommitMessage;
 
-        private string CommitCommandFormat = "{0} \"{1}\" y";
-
-        public IronPortCommitCommand()
+        private string Commit(IronPortShell sshClient)
         {
-            CommitCommandText = _supportedCommands[IronPortSupportedCommand.Commit];
-            CommandResult = null;
-        }
-
-        private void Commit(IronPortShell sshClient)
-        {
-            var commitCmd = string.Format(CommitCommandFormat, CommitCommandText, CommitMessage);
-
-            sshClient.RunShellCommand(commitCmd);
+            return sshClient.RunShellCommand(CommitCommandText);
         }
 
         public string ExecuteAndCommit(IronPortShell sshClient)
         {
             var result = Execute(sshClient);
+            var commitResult = string.Empty;
 
             if (null != result)
-                Commit(sshClient);
+                commitResult = Commit(sshClient);
 
-            CommandResult = result;
+            CommandResult = string.Concat(result.Trim(), commitResult.Trim());
 
-            return result;
+            return CommandResult;
         }
 
     }

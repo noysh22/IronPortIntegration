@@ -7,6 +7,7 @@ using System.Diagnostics;
 
 using Renci.SshNet;
 
+using Siemplify.Integrations.IronPort.Common;
 using Siemplify.Integrations.IronPort.Exceptions;
 
 namespace Siemplify.Integrations.IronPort
@@ -20,16 +21,31 @@ namespace Siemplify.Integrations.IronPort
 
         public IronPortAddSenderToBlacklistCommand(string hostList)
         {
-            CommandText = _supportedCommands[IronPortSupportedCommand.AddSenderToBlackList];
             HostList = hostList;
             CommitMessage = string.Format("Adding host {0} to blacklist of {1}", HostList, LISTENER);
+
+            CommitCommandText = string.Format(_supportedCommands[IronPortSupportedCommand.Commit], CommitMessage);
+            CommandText = string.Format(_supportedCommands[IronPortSupportedCommand.AddSenderToBlackList],
+                LISTENER,
+                SENDERGROUP,
+                HostList);
+
+            CommandResult = null;
         }
 
         public override string Execute(IronPortShell sshClient)
         {
-            var formattedCommand = string.Format(CommandText, LISTENER, SENDERGROUP, HostList);
+            return sshClient.RunShellCommand(CommandText);
+        }
 
-            return sshClient.RunShellCommand(formattedCommand);
+        public bool IsSucceeded()
+        {
+            string successString = CommandText + IronPortCommon.UnixLineBreak +
+                IronPortShell.SHELL_READY_INDICATOR +
+                CommitCommandText + IronPortCommon.UnixLineBreak +
+                IronPortShell.SHELL_READY_INDICATOR;
+
+            return CommandResult.Equals(successString);
         }
 
         public override Task<string> ExecuteAsync(IronPortShell sshClient)

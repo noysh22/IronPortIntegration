@@ -85,7 +85,23 @@ namespace Siemplify.Integrations.IronPort
             return null;
         }
 
-        public string AddSenderToBlacklist(string sender)
+        /// <summary>
+        /// Add a sender to the blacklist of the ironport apllience
+        /// </summary>
+        /// <param name="sender">The sender parameter to add to blacklist</param>
+        /// <remarks>
+        /// The sender parameter must match the format of cisco ironport sender format
+        /// The following formats are allowed: 
+        //      IPv6 addresses such as 2001:420:80:1::5
+        //      IPv6 subnets such as 2001:db8::/32
+        //      IPv4 addresses such as 10.1.1.0
+        //      IPv4 subnets such as 10.1.1.0/24 or 10.2.3.1
+        //      IPv4 and IPv6 address ranges such as 10.1.1.10-20, 10.1.1-5 or 2001::2-2001::10.
+        //      Hostnames such as example.com.
+        //      Partial hostnames such as .example.com.
+        /// </remarks>
+        /// <returns></returns>
+        public bool AddSenderToBlacklist(string sender)
         {
             try
             {
@@ -117,7 +133,7 @@ namespace Siemplify.Integrations.IronPort
                 _sshClient.Disconnect();
             }
 
-            return null;
+            return false;
         }
 
         /// <summary>
