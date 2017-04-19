@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using IronPortIntegration;
-using IronPortIntegration.Exceptions;
+using Siemplify.Integrations.IronPort;
+using Siemplify.Integrations.IronPort.Exceptions;
 
-namespace IronPortIntegration.Exe
+namespace Siemplify.Integrations.IronPort.Exe
 {
     class ProgramMain
     {

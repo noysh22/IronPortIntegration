@@ -9,9 +9,9 @@ using System.Diagnostics;
 using Renci.SshNet;
 using Renci.SshNet.Common;
 
-using IronPortIntegration.Exceptions;
+using Siemplify.Integrations.IronPort.Exceptions;
 
-namespace IronPortIntegration
+namespace Siemplify.Integrations.IronPort
 {
     public class IronPortShell : SshClient
     {

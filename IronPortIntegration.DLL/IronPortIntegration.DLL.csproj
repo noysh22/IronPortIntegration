@@ -34,6 +34,9 @@
       <HintPath>..\packages\SSH.NET.2016.0.0\lib\net40\Renci.SshNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Siemplify.Common">
+      <HintPath>Resources\Siemplify.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -47,9 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\IronPortCommon.cs" />
+    <Compile Include="Common\Settings.cs" />
     <Compile Include="Data\GrepLogEntry.cs" />
     <Compile Include="Data\IronPortQueryResolver.cs" />
     <Compile Include="Data\SmtpConversation.cs" />
+    <Compile Include="IronPortMetadataProvider.cs" />
     <Compile Include="IronPortShell.cs" />
     <Compile Include="LogParsers\GrepResultParser.cs" />
     <Compile Include="SshCommands\IronPortGetVersionCommand.cs" />
@@ -63,6 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ironport.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

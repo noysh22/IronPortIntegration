@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace IronPortIntegration
+namespace Siemplify.Integrations.IronPort
 {
     public class GrepLogEntry
     {

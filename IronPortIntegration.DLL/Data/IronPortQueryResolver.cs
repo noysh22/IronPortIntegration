@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using IronPortIntegration.Common;
-using IronPortIntegration.Exceptions;
+using Siemplify.Integrations.IronPort.Common;
+using Siemplify.Integrations.IronPort.Exceptions;
 
-namespace IronPortIntegration
+namespace Siemplify.Integrations.IronPort
 {
     /// <summary>
     /// Responsible for quering the iron port appliance and resolve data queries

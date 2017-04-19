@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.Configuration;
 using Renci.SshNet;
 
-using IronPortIntegration.Exceptions;
+using Siemplify.Integrations.IronPort.Exceptions;
 
-namespace IronPortIntegration
+namespace Siemplify.Integrations.IronPort
 {
     public class IronPortController : IDisposable
     {

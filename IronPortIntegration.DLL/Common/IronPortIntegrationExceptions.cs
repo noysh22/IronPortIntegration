@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronPortIntegration.Exceptions
+namespace Siemplify.Integrations.IronPort.Exceptions
 {
     public class IronPortException : Exception
     {

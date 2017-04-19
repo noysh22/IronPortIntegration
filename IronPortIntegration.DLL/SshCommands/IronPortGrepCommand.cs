@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Renci.SshNet;
 
-using IronPortIntegration.Exceptions;
+using Siemplify.Integrations.IronPort.Exceptions;
 
-namespace IronPortIntegration
+namespace Siemplify.Integrations.IronPort
 {
     public class IronPortGrepMailLogCommand : IronPortSSHCommand
     {

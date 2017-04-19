@@ -4,10 +4,10 @@ using System.Linq;
 
 using System.Text.RegularExpressions;
 
-using IronPortIntegration.Common;
-using IronPortIntegration.Exceptions;
+using Siemplify.Integrations.IronPort.Common;
+using Siemplify.Integrations.IronPort.Exceptions;
 
-namespace IronPortIntegration
+namespace Siemplify.Integrations.IronPort
 {
     public class GrepResultParser
     {

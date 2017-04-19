@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
 
-namespace IronPortIntegration
+namespace Siemplify.Integrations.IronPort
 {
     /* In order to support more ssh commands add values to this enum
      * and add another key-value suitable to the command in the dict below
