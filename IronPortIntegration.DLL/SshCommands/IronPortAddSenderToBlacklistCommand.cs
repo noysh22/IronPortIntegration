@@ -35,16 +35,8 @@ namespace Siemplify.Integrations.IronPort.SshCommands
             CommandResult = null;
         }
 
-        private string CreateSendersBlockList()
-        {
-            var escapedList = _senders.Select(Regex.Escape).ToList();
-
-            return string.Join(JOIN_SEPARATOR, escapedList);
-        }
-
         public override string Execute(IronPortShell sshClient)
         {
-            var escapedSendersList = CreateSendersBlockList();
             string filterText = string.Format(BLOCK_FILTER_FORMAT, _blockFilterName, string.Join(JOIN_SEPARATOR, _senders));
             filterText += BLOCK_FILTER_ACTION;
 
