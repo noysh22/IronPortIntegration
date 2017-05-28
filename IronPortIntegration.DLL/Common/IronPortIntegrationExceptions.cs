@@ -38,4 +38,13 @@ namespace Siemplify.Integrations.IronPort.Exceptions
             base(message)
         { }
     }
+
+    public class IronPortBlockFilterAlreadyExistsException : IronPortException
+    {
+        public IronPortBlockFilterAlreadyExistsException(string message) :
+            base(message)
+        { }
+    }
+
 }
+

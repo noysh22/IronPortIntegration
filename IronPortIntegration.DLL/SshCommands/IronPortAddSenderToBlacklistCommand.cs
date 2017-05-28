@@ -15,6 +15,7 @@ namespace Siemplify.Integrations.IronPort.SshCommands
         private const string JOIN_SEPARATOR = "|";
         private const string STOP_FILTER_TYPING_STRING = ".";
         private const string FILTER_LIST_COMMAND = "filters list";
+        private const string FILTER_ADDED_MESSAGE = "1 filters added.";
 
         private readonly List<string> _senders;
         private readonly string _blockFilterName;
@@ -35,8 +36,21 @@ namespace Siemplify.Integrations.IronPort.SshCommands
             CommandResult = null;
         }
 
+        private bool IsFilterExists(IronPortShell sshClient)
+        {
+            string cmdResult = sshClient.RunCommand(FILTER_LIST_COMMAND).Result;
+
+            return cmdResult.Contains(_blockFilterName);
+        }
+
         public override string Execute(IronPortShell sshClient)
         {
+            if (IsFilterExists(sshClient))
+            {
+                throw new IronPortBlockFilterAlreadyExistsException(string.Format("Could not add senders to filter {0}, filter with that name already exists",
+                    _blockFilterName));
+            }
+
             string filterText = string.Format(BLOCK_FILTER_FORMAT, _blockFilterName, string.Join(JOIN_SEPARATOR, _senders));
             filterText += BLOCK_FILTER_ACTION;
 
@@ -50,9 +64,7 @@ namespace Siemplify.Integrations.IronPort.SshCommands
 
         public bool IsSucceeded(IronPortShell sshClient)
         {
-            string cmdResult = sshClient.RunCommand(FILTER_LIST_COMMAND).Result;
-
-            return cmdResult.Contains(_blockFilterName);
+            return CommandResult.Contains(FILTER_ADDED_MESSAGE);
         }
 
         public override Task<string> ExecuteAsync(IronPortShell sshClient)

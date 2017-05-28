@@ -175,6 +175,11 @@ namespace Siemplify.Integrations.IronPort
             return false;
         }
 
+        public bool AddSendersToBlacklist(string sender, string filterName)
+        {
+            return AddSendersToBlacklist(new List<string> { sender }, filterName);
+        }
+
         /// <summary>
         /// Get all the recipients which recieved a given mail subject
         /// </summary>
