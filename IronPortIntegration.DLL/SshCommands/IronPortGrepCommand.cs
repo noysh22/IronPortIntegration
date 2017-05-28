@@ -10,7 +10,7 @@ using Siemplify.Integrations.IronPort.Exceptions;
 
 namespace Siemplify.Integrations.IronPort
 {
-    public class IronPortGrepMailLogCommand : IronPortSSHCommand
+    public class IronPortGrepMailLogCommand : IronPortSshCommand
     {
         private static string MailLogFolder = "mail_logs"; 
 

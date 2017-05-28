@@ -10,7 +10,7 @@ using Siemplify.Integrations.IronPort.Exceptions;
 
 namespace Siemplify.Integrations.IronPort
 {
-    public class IronPortGetVersionCommand : IronPortSSHCommand
+    public class IronPortGetVersionCommand : IronPortSshCommand
     {
         public IronPortGetVersionCommand()
         {

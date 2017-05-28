@@ -18,47 +18,59 @@ namespace Siemplify.Integrations.IronPort.Exe
             {
                 try
                 {
-                    //var addSenderOutput = controller.AddSenderToBlacklist("test7.com");
+                    //var addDomainToOutput = controller.AddDomainToBlacklist("test10.com");
 
-                    //if (!addSenderOutput)
-                    //    Console.WriteLine("Failed adding sender to blacklist, look at output window");
+                    //if (!addDomainToOutput)
+                    //    Console.WriteLine("Failed adding domain to blacklist, look at output window");
                     //else
                     //    Console.WriteLine("Great Success");
 
-                    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                    var recipients1 = controller.GetAllRecipientsBySubject("This is a test subject");
-                    stopwatch.Stop();
+                    var senders = new List<string> { "blocktest2@example.com", "blocktest3@example.com" };
+                    var addSendersOutput =
+                        controller.AddSendersToBlacklist(senders, "BlockFilter2");
 
-                    Console.WriteLine("Elapsed time for GetAllRecipientsBySubject = {0}s", stopwatch.ElapsedMilliseconds / 1000);
-                    stopwatch.Restart();
-                    var recipients = controller.GetAllRecipientsBySender("noy.sh22@gmail.com");
-                    stopwatch.Stop();
-
-                    Console.WriteLine("Elapsed time for GetAllRecipientsBySender = {0}s", stopwatch.ElapsedMilliseconds / 1000);
-
-                    if (null == recipients)
-                    {
-                        Console.WriteLine("Nothing found");
-                    }
+                    if (!addSendersOutput)
+                        Console.WriteLine("Failed adding senders to blacklist, look at output window");
                     else
-                    {
-                        foreach (var recipient in recipients)
-                        {
-                            Console.WriteLine(recipient);
-                        }
+                        Console.WriteLine("Great Success, list added to filters");
 
-                        Console.WriteLine("=====================================");
 
-                        foreach (var recipient in recipients1)
-                        {
-                            Console.WriteLine(recipient);
-                        }
-                    }
+                    //var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    //var recipients1 = controller.GetAllRecipientsBySubject("This is a test subject");
+                    //stopwatch.Stop();
+
+                    //Console.WriteLine("Elapsed time for GetAllRecipientsBySubject = {0}s", stopwatch.ElapsedMilliseconds / 1000);
+                    //stopwatch.Restart();
+                    //var recipients = controller.GetAllRecipientsBySender("blocktest3@example.com");
+                    //stopwatch.Stop();
+
+                    //Console.WriteLine("Elapsed time for GetAllRecipientsBySender = {0}s", stopwatch.ElapsedMilliseconds / 1000);
+
+                    //if (null == recipients)
+                    //{
+                    //    Console.WriteLine("Nothing found");
+                    //}
+                    //else
+                    //{
+                    //    foreach (var recipient in recipients)
+                    //    {
+                    //        Console.WriteLine(recipient);
+                    //    }
+
+                    //    Console.WriteLine("=====================================");
+
+                    //    foreach (var recipient in recipients1)
+                    //    {
+                    //        Console.WriteLine(recipient);
+                    //    }
+                    //}
                 }
                 catch (IronPortException ex)
                 {
-                    Console.WriteLine("Failed with: {0}", ex.Message +
-                        Environment.NewLine + ex.InnerException.Message);
+                    string msg = null == ex.InnerException
+                        ? ex.Message
+                        : ex.Message + Environment.NewLine + ex.InnerException.Message;
+                    Console.WriteLine("Failed with: {0}", msg);
                 }
                 catch (Exception ex)
                 {

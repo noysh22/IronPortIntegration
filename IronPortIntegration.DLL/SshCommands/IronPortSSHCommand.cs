@@ -15,11 +15,12 @@ namespace Siemplify.Integrations.IronPort
     {
         GetVersion = 0x1,
         Commit,
-        AddSenderToBlackList,
+        AddDomainToBlackList,
         GrepLogFile,
+        AddSenderToBlackList
     }
 
-    public abstract class IronPortSSHCommand
+    public abstract class IronPortSshCommand
     {
         public string CommandText { get; protected set; }
         public string CommandResult { get; protected set; }
@@ -30,8 +31,9 @@ namespace Siemplify.Integrations.IronPort
         {
             { IronPortSupportedCommand.GetVersion, "version" },
             { IronPortSupportedCommand.Commit, "commit \"{0}\" Y" },
-            { IronPortSupportedCommand.AddSenderToBlackList, "listenerconfig edit \"{0}\" hostaccess edit sendergroup {1} new {2}" },
-            { IronPortSupportedCommand.GrepLogFile, "grep {0} {1}" }
+            { IronPortSupportedCommand.AddDomainToBlackList, "listenerconfig edit \"{0}\" hostaccess edit sendergroup {1} new {2}" },
+            { IronPortSupportedCommand.GrepLogFile, "grep {0} {1}" },
+            { IronPortSupportedCommand.AddSenderToBlackList, "filters new" }
         };
 
         public abstract string Execute(IronPortShell sshClient);

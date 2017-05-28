@@ -86,11 +86,11 @@ namespace Siemplify.Integrations.IronPort
         }
 
         /// <summary>
-        /// Add a sender to the blacklist of the ironport apllience
+        /// Add a domain to the blacklist of the ironport apllience
         /// </summary>
-        /// <param name="sender">The sender parameter to add to blacklist</param>
+        /// <param name="domain">The domain parameter to add to blacklist</param>
         /// <remarks>
-        /// The sender parameter must match the format of cisco ironport sender format
+        /// The domain parameter must match the format of cisco ironport domain format
         /// The following formats are allowed: 
         //      IPv6 addresses such as 2001:420:80:1::5
         //      IPv6 subnets such as 2001:db8::/32
@@ -101,13 +101,52 @@ namespace Siemplify.Integrations.IronPort
         //      Partial hostnames such as .example.com.
         /// </remarks>
         /// <returns></returns>
-        public bool AddSenderToBlacklist(string sender)
+        public bool AddDomainToBlacklist(string domain)
         {
             try
             {
                 EnsureConnection();
-                Debug.WriteLine("SSH client connected to {0} using username {1}", Host, UserName);
-                return _sshClient.AddSenderToBlacklist(sender);
+                return _sshClient.AddDomainToBlacklist(domain);
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                Debug.WriteLine("Failed Connecting to IronPort via ssh - {0}", ex.Message);
+                throw new IronPortSshConnentionException("Failed Connecting to IronPort via ssh", ex);
+            }
+            catch (IronPortNotConnectedException)
+            {
+                Debug.WriteLine("SSH client it not connected");
+                throw;
+            }
+            catch (IronPortSshCommandException ex)
+            {
+                Debug.WriteLine("Failed getting iron-port version with status: {0} ({1})", ex.ExitStatus, ex.Message);
+            }
+            catch (IronPortException ex)
+            {
+                Debug.WriteLine("General Error - {0}", ex.Message);
+                throw;
+            }
+            finally
+            {
+                _sshClient.Disconnect();
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Add a list of senders to filter list in iron port which blocks the emails
+        /// </summary>
+        /// <param name="senders">List of senders to block</param>
+        /// <param name="filterName">The name of the filter which is created</param>
+        /// <returns></returns>
+        public bool AddSendersToBlacklist(List<string> senders, string filterName)
+        {
+            try
+            {
+                EnsureConnection();
+                return _sshClient.AddSendersToBlackList(senders, filterName);
             }
             catch (System.Net.Sockets.SocketException ex)
             {
@@ -148,9 +187,9 @@ namespace Siemplify.Integrations.IronPort
         }
 
         /// <summary>
-        /// Get all the recipients which recieved mails from a given sender
+        /// Get all the recipients which recieved mails from a given domain
         /// </summary>
-        /// <param name="senderMail">The sender address to query</param>
+        /// <param name="senderMail">The domain address to query</param>
         /// <returns>List of all recipients found</returns>
         public List<string> GetAllRecipientsBySender(string senderMail)
         {

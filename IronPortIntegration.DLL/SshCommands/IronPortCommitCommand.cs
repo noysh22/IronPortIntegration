@@ -11,7 +11,7 @@ using Siemplify.Integrations.IronPort.Common;
 
 namespace Siemplify.Integrations.IronPort
 {
-    public abstract class IronPortCommitCommand : IronPortSSHCommand
+    public abstract class IronPortCommitCommand : IronPortSshCommand
     {
         protected string CommitCommandText;
         protected string CommitMessage;

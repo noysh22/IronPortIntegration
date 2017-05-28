@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 using Siemplify.Integrations.IronPort.Common;
@@ -18,10 +18,10 @@ namespace Siemplify.Integrations.IronPort
         private static string SeverityRegexString = @"\s(Info|Warning):\s";
         private static Regex SeverityRegex;
 
-        private static string MIDRegexString = @"\s(MID)\s([1-9]+)\s";
+        private static string MIDRegexString = @"\s(MID)\s([0-9]+)\s";
         private static Regex MIDRegex;
 
-        private static string ICIDRegexString = @"\s(ICID)\s([1-9]+)\s";
+        private static string ICIDRegexString = @"\s(ICID)\s([0-9]+)\s";
         private static Regex ICIDRegex;
 
         private static int RegexTimeoutSeconds = 30;
@@ -30,6 +30,7 @@ namespace Siemplify.Integrations.IronPort
         #region Static string formats
         private static string SmtpConversationStartFormat = @"(:\sStart\sMID\s{0}\s)";
         private static string SmtpAbortedMessageFormat = @"(Message\sfinished\sMID\s{0}\saborted)$";
+        private static string SmtpDroppedMessageFormat = @"(:\sMessage\saborted\sMID\s{0}\sDropped\sby\sfilter\s)";
         private static string SmtpConversationDoneFormat = @"(Message\sfinished\sMID\s{0}\sdone)$";
         #endregion
 
@@ -89,8 +90,8 @@ namespace Siemplify.Integrations.IronPort
             }
 
             var midStr = matches[0].Value.Trim();
-
-            return int.Parse(midStr.Split(' ').Last());
+            int result = int.Parse(midStr.Split(' ').Last());
+            return result;
         }
 
         public int ParseICID(string rawData)
@@ -118,8 +119,8 @@ namespace Siemplify.Integrations.IronPort
         /// <returns>True/False if an aborted SMTP conversation</returns>
         public bool IsAbortedConversation(string smtpConversation, int MID)
         {
-            var match = Regex.Match(smtpConversation, string.Format(SmtpAbortedMessageFormat, MID));
-            return match.Success;
+            return Regex.IsMatch(smtpConversation, string.Format(SmtpAbortedMessageFormat, MID)) || 
+                Regex.IsMatch(smtpConversation, string.Format(SmtpDroppedMessageFormat, MID));
         }
 
         /// <summary>

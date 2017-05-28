@@ -12,20 +12,20 @@ using Siemplify.Integrations.IronPort.Exceptions;
 
 namespace Siemplify.Integrations.IronPort
 {
-    public class IronPortAddSenderToBlacklistCommand : IronPortCommitCommand
+    public class IronPortAddDomainToBlacklistCommand : IronPortCommitCommand
     {
         private static string LISTENER = "IncomingMail";
         private static string SENDERGROUP = "BLACKLIST";
 
         public string HostList;
 
-        public IronPortAddSenderToBlacklistCommand(string hostList)
+        public IronPortAddDomainToBlacklistCommand(string hostList)
         {
             HostList = hostList;
             CommitMessage = string.Format("Adding host {0} to blacklist of {1}", HostList, LISTENER);
 
             CommitCommandText = string.Format(_supportedCommands[IronPortSupportedCommand.Commit], CommitMessage);
-            CommandText = string.Format(_supportedCommands[IronPortSupportedCommand.AddSenderToBlackList],
+            CommandText = string.Format(_supportedCommands[IronPortSupportedCommand.AddDomainToBlackList],
                 LISTENER,
                 SENDERGROUP,
                 HostList);

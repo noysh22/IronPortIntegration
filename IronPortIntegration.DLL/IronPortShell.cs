@@ -10,6 +10,7 @@ using Renci.SshNet;
 using Renci.SshNet.Common;
 
 using Siemplify.Integrations.IronPort.Exceptions;
+using Siemplify.Integrations.IronPort.SshCommands;
 
 namespace Siemplify.Integrations.IronPort
 {
@@ -23,7 +24,7 @@ namespace Siemplify.Integrations.IronPort
         private const uint HEIGHT = 600;
         private const int BUFFER_SIZE = 4 * 1024;
 
-        public static readonly string SHELL_READY_INDICATOR = "relay.dworld.co.uk>";
+        public const string SHELL_READY_INDICATOR = "relay.dworld.co.uk>";
 
         private static readonly Tuple<string, string> ReplacableShellString = 
             new Tuple<string, string>("\r\r\n", string.Empty);
@@ -33,7 +34,7 @@ namespace Siemplify.Integrations.IronPort
 
         private const string UNIX_LINEBREAK = "\n";
 
-        public TimeSpan CommandTimeout { get; private set; }
+        private static readonly TimeSpan CommandTimeout = new TimeSpan(0, 1, 0);
         private ShellStream _shell;
         private object _syncObj;
         private bool _isShellReady;
@@ -44,7 +45,6 @@ namespace Siemplify.Integrations.IronPort
             ErrorOccurred += IronPortShell_ErrorOccurred;
             _syncObj = new object();
             _isShellReady = false;
-            CommandTimeout = new TimeSpan(0, 1, 0); // Timeout is 1 minute
         }
 
         public IronPortShell(ConnectionInfo conn)
@@ -53,7 +53,7 @@ namespace Siemplify.Integrations.IronPort
             ErrorOccurred += IronPortShell_ErrorOccurred;
             _syncObj = new object();
             _isShellReady = false;
-            CommandTimeout = new TimeSpan(0, 1, 0); // Timeout is 1 minute
+ 
         }
 
         public void StartShell(string terminalName = DEFAULT_SHELL, uint columns = COLUMNS, uint rows = ROWS, uint width = WIDTH, uint height = HEIGHT, int bufferSize = BUFFER_SIZE)
@@ -64,20 +64,36 @@ namespace Siemplify.Integrations.IronPort
             _shell = CreateShellStream(terminalName, columns, rows, width, height, bufferSize);
 
             // Wait for the shell to be ready by waiting for the console indicator to appear on the stream
-            var result = _shell.Expect(SHELL_READY_INDICATOR, CommandTimeout);
+            _shell.Expect(SHELL_READY_INDICATOR, CommandTimeout);
             _isShellReady = true;
         }
 
-        public string RunShellCommand(string commandText)
+        public void RawShellWrite(string input)
+        {
+            lock (_syncObj)
+            {
+                _shell.Write(input + UNIX_LINEBREAK);
+            }
+        }
+
+        public string WaitForShellOutput(TimeSpan WaitTimeout, string shellReadyIndicator = SHELL_READY_INDICATOR)
+        {
+            return _shell.Expect(shellReadyIndicator, WaitTimeout);
+        }
+
+        public string RunShellCommand(string commandText, string shellReadyIndicator = SHELL_READY_INDICATOR)
         {
             if (!_isShellReady)
                 return null;
 
             lock (_syncObj)
             {
-                _shell.Write(commandText + UNIX_LINEBREAK);
+                //_shell.Write(commandText + UNIX_LINEBREAK);
 
-                var result = _shell.Expect(SHELL_READY_INDICATOR, CommandTimeout);
+                RawShellWrite(commandText);
+
+                var result = WaitForShellOutput(CommandTimeout, shellReadyIndicator);
+                    //_shell.Expect(shellReadyIndicator, CommandTimeout);
 
                 // Replace the string \r\r\n which returns from the shell with empty string
                 result = result.Replace(ReplacableShellString.Item1, ReplacableShellString.Item2);
@@ -101,12 +117,12 @@ namespace Siemplify.Integrations.IronPort
             return getVersion.Execute(this);
         }
 
-        public bool AddSenderToBlacklist(string sender)
+        public bool AddDomainToBlacklist(string domain)
         {
             if (!IsConnected)
                 throw new IronPortNotConnectedException();
 
-            var addToBlacklist = new IronPortAddSenderToBlacklistCommand(sender);
+            var addToBlacklist = new IronPortAddDomainToBlacklistCommand(domain);
 
             StartShell();
             var result = addToBlacklist.ExecuteAndCommit(this);
@@ -117,7 +133,31 @@ namespace Siemplify.Integrations.IronPort
             if (!isSucceeded)
             {
                 Debug.WriteLine(string.Format("Failed adding {0} to blacklist, command result is: {1}",
-                    sender, result));
+                    domain, result));
+            }
+
+            return isSucceeded;
+        }
+
+        public bool AddSendersToBlackList(List<string> senders, string filterName)
+        {
+            if (!IsConnected)
+            {
+                throw new IronPortNotConnectedException();
+            }
+
+            var addToBlacklist = new IronPortAddSenderToBlacklistCommand(senders, filterName);
+
+            StartShell();
+            var result = addToBlacklist.ExecuteAndCommit(this);
+            CloseShell();
+
+            var isSucceeded = addToBlacklist.IsSucceeded(this);
+
+            if (!isSucceeded)
+            {
+                Debug.WriteLine("Failed adding {0} to blacklist, command result is: {1}",
+                    string.Join("|", senders), result);
             }
 
             return isSucceeded;
