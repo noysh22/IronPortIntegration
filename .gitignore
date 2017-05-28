@@ -48,3 +48,11 @@ Temporary Items
 
 
 packages/
+*.dll
+*.pdb
+*.cache
+/IronPortIntegration.DLL/bin/Debug/*
+/IronPortIntegration.EXE/bin/Debug/*
+/IronPortIntegration.DLL/obj/*
+/IronPortIntegration.EXE/obj/*
+*.suo
